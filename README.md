@@ -55,7 +55,7 @@ npm electron-serve
 The Electron app will launch, showing the interactive grid for pathfinding tests.
 
 ---
-
+<!--
 ## Building the App for Production
 
 To create an executable version of the app:
@@ -80,7 +80,7 @@ npm run make
 The packaged app can be found in the `out` directory.
 
 ---
-
+-->
 ## Usage
 
 1. Launch the application.
