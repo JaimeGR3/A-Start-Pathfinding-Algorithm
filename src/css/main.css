@@ -199,3 +199,8 @@ button:hover {
 .grid-container::-webkit-scrollbar-corner {
   background-color: #111827;
 }
+
+.message {
+  font-size: 14px;
+  color: #d13a3a;
+}

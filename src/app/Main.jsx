@@ -12,6 +12,7 @@ export default function Main() {
     const [goal, setGoal] = useState('(0,0)')
     const [path, setPath] = useState([]);
     const [neighbors, setNeighbors] = useState([])
+    const [message, setMessage] = useState('')
 
     useEffect(() => {
         generateCoordinates(axisX, axisY);
@@ -68,22 +69,7 @@ export default function Main() {
 
     const handleRunAlgorithm = async () => {
         try {
-            resetPathCells();
-            const result = await window.electron.runAStarAlgorithm(grid, start, goal);
-            if (result) {
-                setPath(result[0]);
-                setNeighbors(result[1])
-            } else {
-                setPath([]);
-                setNeighbors([])
-            }
-        } catch (err) {
-            console.error('Error running A*:', err);
-        }
-    };
-
-    const handleUpdateRunAlgorithm = async (grid) => {
-        try {
+            setMessage('')
             resetPathCells();
             const result = await window.electron.runAStarAlgorithm(grid, start, goal);
             if (result) {
@@ -131,7 +117,7 @@ export default function Main() {
 
         updatedGrid[x][y] = updatedGrid[x][y] === 1 ? 0 : 1;
         setGrid(updatedGrid);
-        handleUpdateRunAlgorithm(updatedGrid);
+        setMessage('To see the path changes, click on "Run A Star Algorithm"')
     };
 
     return (
@@ -169,6 +155,7 @@ export default function Main() {
                     <Dopdown title="Goal" data={coordinates} onChange={handleGoal} />
                 </section>
                     <button onClick={handleRunAlgorithm}>Run A Star Algorithm</button>
+                    <span className='message'>{message}</span>
                 <section className="grid-container">
                     {grid.map((row, x) => (
                         <div key={x} className="row">
