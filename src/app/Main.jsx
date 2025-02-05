@@ -16,7 +16,6 @@ export default function Main() {
     useEffect(() => {
         generateCoordinates(axisX, axisY);
         const array = generateArray();
-        console.log(axisX, axisY, array)
         setGrid(array)
     }, [axisX, axisY]);
 
@@ -64,16 +63,12 @@ export default function Main() {
     };
 
     const handleStart = (event) => {
-        console.log(event.target.value)
         setStart(event.target.value)
     };
 
     const handleRunAlgorithm = async () => {
         try {
-            // Limpiar celdas del path antes de ejecutar el algoritmo
             resetPathCells();
-
-            console.log(grid, start, goal);
             const result = await window.electron.runAStarAlgorithm(grid, start, goal);
             if (result) {
                 setPath(result[0]);
@@ -89,10 +84,7 @@ export default function Main() {
 
     const handleUpdateRunAlgorithm = async (grid) => {
         try {
-            // Limpiar celdas del path antes de ejecutar el algoritmo
             resetPathCells();
-
-            console.log(start, goal);
             const result = await window.electron.runAStarAlgorithm(grid, start, goal);
             if (result) {
                 setPath(result[0]);
@@ -120,8 +112,8 @@ export default function Main() {
                 const isPathCell = path.some(([px, py]) => px === x && py === y);
                 const isProcessedCell = neighbors.some(([nx, ny]) => nx === x && ny === y);
 
-                if (isPathCell) return 2;  // Path cell (highlighted)
-                if (isProcessedCell) return 3;  // Processed but not path (green)
+                if (isPathCell) return 2
+                if (isProcessedCell) return 3
                 return cell;
             })
         );
@@ -137,10 +129,9 @@ export default function Main() {
     const toggleCell = (x, y) => {
         const updatedGrid = [...grid];
 
-        // Toggle cell between 0 (open) and 1 (blocked)
         updatedGrid[x][y] = updatedGrid[x][y] === 1 ? 0 : 1;
         setGrid(updatedGrid);
-        handleUpdateRunAlgorithm(updatedGrid); // Recalculate path
+        handleUpdateRunAlgorithm(updatedGrid);
     };
 
     return (

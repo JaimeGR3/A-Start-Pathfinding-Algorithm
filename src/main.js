@@ -1,7 +1,6 @@
 const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('path');
 const { execFile } = require('child_process');  
-const fs = require('fs');
 
 function createWindow() {
     const win = new BrowserWindow({
@@ -41,9 +40,7 @@ app.whenReady().then(() => {
 });
 
 function runAStar(array, start, goal) {
-    console.log(start, goal);
     return new Promise((resolve, reject) => {
-        // Ruta al archivo ejecutable compilado
         const exeFilePath = path.join(__dirname, 'lib', 'dist', 'a_star.exe');
 
         execFile(exeFilePath, [JSON.stringify(array), start, goal], (error, stdout, stderr) => {
@@ -65,31 +62,3 @@ function runAStar(array, start, goal) {
         });
     });
 }
-
-// Function to run Python A* algorithm
-// function runAStar(array, start, goal) {
-//     console.log(start, goal)
-//     return new Promise((resolve, reject) => {
-//         const python = spawn('python', ['./src/lib/a_star.py', JSON.stringify(array), start, goal]);
-
-//         let result = '';
-//         python.stdout.on('data', (data) => {
-
-//             result += data.toString();
-//             console.log(result)
-//         });
-
-//         python.stderr.on('data', (data) => {
-//             console.error(`Python error: ${data}`);
-//         });
-
-//         python.on('close', (code) => {
-//             if (code === 0) {
-//                 resolve(JSON.parse(result));
-//                 python.kill();
-//             } else {
-//                 reject(`Python script failed with code ${code}`);
-//             }
-//         });
-//     });
-// }

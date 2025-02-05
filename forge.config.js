@@ -5,10 +5,7 @@ const path = require('path');
 module.exports = {
   packagerConfig: {
     icon: './src/images/favicon',
-    asar: true,
-    extraResource: [
-      path.resolve(__dirname, './src/lib/a_star.py')
-    ],
+    asar: true
   },
   rebuildConfig: {},
   makers: [

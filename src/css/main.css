@@ -103,9 +103,7 @@ button:hover {
   border: 1px solid #dcdde1;
   padding: 3px;
   max-height: 70vh;
-  /* Limitar altura */
   max-width: 85vw;
-  /* Limitar ancho */
   grid-auto-flow: row;
 }
 
@@ -177,7 +175,6 @@ button:hover {
 /* Scrollbar Horizontal */
 .grid-container::-webkit-scrollbar:horizontal {
   height: 12px;
-  /* Altura de la scrollbar horizontal */
 }
 
 /* Track Horizontal */

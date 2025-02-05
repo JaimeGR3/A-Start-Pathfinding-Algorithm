@@ -102,10 +102,10 @@ def a_star_search(start_pos, goal_pos, grid):
 
 
 if __name__ == "__main__":
-    data = json.loads(sys.argv[1])  # Expecting array as JSON string from Electron
-    start = tuple(map(int, sys.argv[2].strip("()").split(",")))  # Convert string like '(1,1)' to (1,1)
-    goal = tuple(map(int, sys.argv[3].strip("()").split(",")))   # Convert string like '(8,2)' to (8,2)
+    data = json.loads(sys.argv[1]) 
+    start = tuple(map(int, sys.argv[2].strip("()").split(",")))
+    goal = tuple(map(int, sys.argv[3].strip("()").split(",")))
 
     path = a_star_search(start, goal, data)
 
-    print(json.dumps(path))  # Return the result as a JSON string
+    print(json.dumps(path))
