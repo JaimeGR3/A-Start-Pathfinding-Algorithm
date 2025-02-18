@@ -46,8 +46,9 @@ def get_neighbors(node, array):
         for dx, dy in directions:
             new_x, new_y = x + dx, y + dy
 
-            if 0 <= new_x < len(array) and 0 <= new_y < len(array[0]) and array[new_x][new_y] != 1:
+            if 0 <= new_x < len(array) and 0 <= new_y < len(array[0]) and array[new_x][new_y] != 0:
                 move_cost = math.sqrt(2) if dx != 0 and dy != 0 else 1
+                move_cost += array[new_x][new_y]
                 neighbors.append(((new_x, new_y), move_cost))
 
         return neighbors
@@ -70,7 +71,7 @@ def a_star_search(start_pos, goal_pos, grid):
     to_search = []
     processed = set()
 
-    if grid[start_pos[0]][start_pos[1]] == 1:
+    if grid[start_pos[0]][start_pos[1]] == 0:
         return None
     
     start_node = Node(start_pos, h=heuristic(start_pos, goal_pos))

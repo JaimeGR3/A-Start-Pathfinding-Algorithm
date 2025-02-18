@@ -32,7 +32,7 @@
   font-weight: bold;
   font-size: 16px;
   color: #333;
-  padding-right: 10px;
+  padding-right: 2px;
 }
 
 .imput-container {
@@ -82,7 +82,8 @@ input[type="number"] {
 button {
   background-color: #28a745;
   border: none;
-  padding: 5px 10px;
+  padding: 10px;
+  margin-top: 5px;
   color: white;
   font-weight: bold;
   font-size: 12px;
@@ -125,20 +126,95 @@ button:hover {
   position: relative;
 }
 
-.cell:hover {
-  background-color: #dfe4ea;
-}
-
+/* Terrain Specific Classes */
 .cell.blocked {
   background-color: #ff4757;
+  /* Red */
+}
+
+.cell.road {
+  background-color: #7f8c8d;
+  /* Gray */
+}
+
+.cell.gravel {
+  background-color: #7b3f00;
+  /* Brown */
+}
+
+.cell.sand {
+  background-color: #f1c40f;
+  /* Yellow */
+}
+
+.cell.grass {
+  background-color: #2ecc71;
+  /* Green */
+}
+
+.cell.shallow-water {
+  background-color: #81ecec;
+  /* Light Blue */
+}
+
+.cell.moderate-water {
+  background-color: #0984e3;
+  /* Blue */
+}
+
+.cell.deep-water {
+  background-color: #2d3436;
+  /* Dark Blue */
+}
+
+.cell.stream {
+  background-color: #00b894;
+  /* Turquoise */
+}
+
+.cell.swamp {
+  background-color: #6c5ce7;
+  /* Olive Green */
+}
+
+.cell.flood {
+  background-color: #636e72;
+  /* Brownish Blue */
+}
+
+.cell.mud {
+  background-color: #6a4f4b;
+  /* Dark Brown */
+}
+
+.cell.mountain {
+  background-color: #b7950b;
+  /* Grayish Brown */
+}
+
+.cell.forest {
+  background-color: #1e8449;
+  /* Dark Green */
+}
+
+.cell.dirt {
+  background-color: #f39c12;
+  /* Light Brown */
+}
+
+.cell.bridge {
+  background-color: #cd853f;
+  /* Wooden Brown */
 }
 
 .cell.path {
   background-color: #74b9ff;
+  /* Path (Blue) */
 }
 
 .cell.processed {
   background-color: lightgreen;
+  /* Processed cells (Green) */
 }
 
 .cell-text {
@@ -199,8 +275,15 @@ button:hover {
 .grid-container::-webkit-scrollbar-corner {
   background-color: #111827;
 }
-
+.message-section {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  height: 100px;
+}
 .message {
   font-size: 14px;
   color: #d13a3a;
+  height: 10px;
+  font-weight: bold;
 }

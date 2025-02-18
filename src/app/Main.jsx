@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet';
 import Dopdown from '../components/Dopdown';
+import SettingInfo from '../components/SettingInfo'
 import '../css/main.css';
-
 export default function Main() {
     const [axisX, setAxisX] = useState();
     const [axisY, setAxisY] = useState();
@@ -13,6 +13,26 @@ export default function Main() {
     const [path, setPath] = useState([]);
     const [neighbors, setNeighbors] = useState([])
     const [message, setMessage] = useState('')
+    const [terrain, setTerrain] = useState(0)
+    const obstacles = [
+        { content: "Blocked (Red)", value: 0 },
+        { content: "Road (Gray)", value: 1 },
+        { content: "Gravel (Brown)", value: 2 },
+        { content: "Sand (Yellow)", value: 3 },
+        { content: "Grass (Green)", value: 2.5 },
+        { content: "Shallow Water (Light Blue)", value: 3 },
+        { content: "Moderate Water (Blue)", value: 4 },
+        { content: "Deep Water (Dark Blue)", value: 6 },
+        { content: "Stream (Turquoise)", value: 3 },
+        { content: "Swamp (Olive Green)", value: 5 },
+        { content: "Flood (Brownish Blue)", value: 8 },
+        { content: "Mud (Dark Brown)", value: 4 },
+        { content: "Mountain (Grayish Brown)", value: 5 },
+        { content: "Forest (Dark Green)", value: 4 },
+        { content: "Dirt (Light Brown)", value: 2 },
+        { content: "Bridge (Wooden Brown)", value: 1.1 }
+    ];
+
 
     useEffect(() => {
         generateCoordinates(axisX, axisY);
@@ -66,11 +86,25 @@ export default function Main() {
     const handleStart = (event) => {
         setStart(event.target.value)
     };
+    
+    const handleTerrain = (event) => {
+        setTerrain(Number(event.target.value));
+    };
 
     const handleRunAlgorithm = async () => {
         try {
+            const [startX, startY] = start.replace(/[()]/g, "").split(",").map(Number);
+            const [goalX, goalY] = goal.replace(/[()]/g, "").split(",").map(Number);
+
+            if (grid[startX][startY] === 0 || grid[goalX][goalY] === 0) {
+                setMessage('Start or Goal is in a blocked cell');
+                return;
+            }
+
             setMessage('')
             resetPathCells();
+            console.log(grid)
+            console.log(start, goal)
             const result = await window.electron.runAStarAlgorithm(grid, start, goal);
             if (result) {
                 setPath(result[0]);
@@ -80,13 +114,13 @@ export default function Main() {
                 setNeighbors([])
             }
         } catch (err) {
-            console.error('Error running A*:', err);
+            setMessage('Error running A*:', err);
         }
     };
 
     const resetPathCells = () => {
         const updatedGrid = grid.map(row =>
-            row.map(cell => (cell === 2 || cell === 3 ? 0 : cell))
+            row.map(cell => (cell === 11 || cell === 12 ? 1 : cell))
         );
         setGrid(updatedGrid);
     };
@@ -98,8 +132,8 @@ export default function Main() {
                 const isPathCell = path.some(([px, py]) => px === x && py === y);
                 const isProcessedCell = neighbors.some(([nx, ny]) => nx === x && ny === y);
 
-                if (isPathCell) return 2
-                if (isProcessedCell) return 3
+                if (isPathCell) return 11
+                if (isProcessedCell) return 12
                 return cell;
             })
         );
@@ -108,14 +142,59 @@ export default function Main() {
     }, [path, neighbors]);
 
     const generateArray = () => {
-        const array = Array(axisX).fill().map(() => Array(axisY).fill(0));
+        const array = Array(axisX).fill().map(() => Array(axisY).fill(1));
         return array;
     };
 
+    const getClassNameForCell = (cellValue) => {
+        switch (cellValue) {
+            case 11:
+                return 'path'; // Path (Blue)
+            case 12:
+                return 'processed'; // Processed (Yellow)
+            case 0:
+                return 'blocked'; // Blocked (Red)
+            case 1:
+                return ''; // Road (Gray)
+            case 2:
+                return 'gravel'; // Gravel (Brown)
+            case 3:
+                return 'sand'; // Sand (Yellow)
+            case 2.5:
+                return 'grass'; // Grass (Green)
+            case 3:
+                return 'shallow-water'; // Shallow Water (Light Blue)
+            case 4:
+                return 'moderate-water'; // Moderate Water (Blue)
+            case 6:
+                return 'deep-water'; // Deep Water (Dark Blue)
+            case 3.1:
+                return 'stream'; // Stream (Turquoise)
+            case 5:
+                return 'swamp'; // Swamp (Olive Green)
+            case 8:
+                return 'flood'; // Flood (Brownish Blue)
+            case 4.1:
+                return 'mud'; // Mud (Dark Brown)
+            case 5.1:
+                return 'mountain'; // Mountain (Grayish Brown)
+            case 4.2:
+                return 'forest'; // Forest (Dark Green)
+            case 2.2:
+                return 'dirt'; // Dirt (Light Brown)
+            case 1.1:
+                return 'bridge'; // Bridge (Wooden Brown)
+            default:
+                return ''; // Default case if no match
+        }
+    };
+
+
     const toggleCell = (x, y) => {
         const updatedGrid = [...grid];
-
-        updatedGrid[x][y] = updatedGrid[x][y] === 1 ? 0 : 1;
+        console.log(terrain)
+        console.log(grid)
+        updatedGrid[x][y] = terrain;
         setGrid(updatedGrid);
         setMessage('To see the path changes, click on "Run A Star Algorithm"')
     };
@@ -130,7 +209,8 @@ export default function Main() {
             <main className="main-content">
                 <section className='array_size_section'>
                     <div className='imput-container'>
-                        <span className='dopdown-title'>X:</span>
+                        <span className='dopdown-title'>X</span>
+                        <SettingInfo />
                         <input
                             id="axisX"
                             type="number"
@@ -140,7 +220,8 @@ export default function Main() {
                         />
                     </div>
                     <div className='imput-container'>
-                        <span className='dopdown-title'>Y:</span>
+                        <span className='dopdown-title'>Y</span>
+                        <SettingInfo />
                         <input
                             id="axisY"
                             type="number"
@@ -154,15 +235,21 @@ export default function Main() {
                     <Dopdown title="Start" data={coordinates} onChange={handleStart} />
                     <Dopdown title="Goal" data={coordinates} onChange={handleGoal} />
                 </section>
+                <Dopdown title="Terrain" data={obstacles} onChange={handleTerrain} />
+                <section className='message-section'>
+                    <div>
+
+                    </div>
                     <button onClick={handleRunAlgorithm}>Run A Star Algorithm</button>
                     <span className='message'>{message}</span>
+                </section>
                 <section className="grid-container">
                     {grid.map((row, x) => (
                         <div key={x} className="row">
                             {row.map((cell, y) => (
                                 <div
                                     key={`${x}-${y}`}
-                                    className={`cell ${cell === 1 ? 'blocked' : ''} ${cell === 2 ? 'path' : ''} ${cell === 3 ? 'processed' : ''}`}
+                                    className={`cell ${getClassNameForCell(cell)}`}
                                     onClick={() => toggleCell(x, y)}
                                 >
                                     <span className="cell-text">{`(${x},${y})`}</span>
