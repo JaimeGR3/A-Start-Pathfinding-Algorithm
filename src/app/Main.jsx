@@ -154,8 +154,10 @@ export default function Main() {
                     <Dopdown title="Start" data={coordinates} onChange={handleStart} />
                     <Dopdown title="Goal" data={coordinates} onChange={handleGoal} />
                 </section>
+                <section className='message-section'>
                     <button onClick={handleRunAlgorithm}>Run A Star Algorithm</button>
                     <span className='message'>{message}</span>
+                </section>
                 <section className="grid-container">
                     {grid.map((row, x) => (
                         <div key={x} className="row">
