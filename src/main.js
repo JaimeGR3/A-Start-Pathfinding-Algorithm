@@ -5,9 +5,9 @@ const { execFile } = require('child_process');
 function createWindow() {
     const win = new BrowserWindow({
         width: 800,
-        height: 700,
+        height: 750,
         minWidth: 800,
-        minHeight: 700,
+        minHeight: 750,
         webPreferences: {
             preload: path.join(__dirname, 'preload.js'),
             nodeIntegration: true,

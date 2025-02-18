@@ -156,8 +156,6 @@ button:hover {
 /* Track */
 .grid-container::-webkit-scrollbar-track {
   background: #111827;
-  border-top-right-radius: 8px;
-  border-bottom-right-radius: 8px;
 }
 
 /* Thumb */
@@ -180,8 +178,6 @@ button:hover {
 /* Track Horizontal */
 .grid-container::-webkit-scrollbar-track:horizontal {
   background: #111827;
-  border-top-left-radius: 8px;
-  border-top-right-radius: 8px;
 }
 
 /* Thumb Horizontal */
@@ -210,5 +206,6 @@ button:hover {
 .message {
   font-size: 14px;
   color: #d13a3a;
-  height: 20px;
+  font-weight: bold;
+  height: 30px;
 }

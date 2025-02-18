@@ -54,7 +54,7 @@ export default function Main() {
             y = 400
         }
         if (y === 0) {
-            y = 1 
+            y = 1
         }
         setAxisY(y)
     }
@@ -69,6 +69,14 @@ export default function Main() {
 
     const handleRunAlgorithm = async () => {
         try {
+            const [startX, startY] = start.replace(/[()]/g, "").split(",").map(Number);
+            const [goalX, goalY] = goal.replace(/[()]/g, "").split(",").map(Number);
+
+            if (grid[startX][startY] === 1 || grid[goalX][goalY] === 1) {
+                setMessage('Start or Goal is in a blocked cell');
+                return;
+            }
+
             setMessage('')
             resetPathCells();
             const result = await window.electron.runAStarAlgorithm(grid, start, goal);
@@ -78,6 +86,7 @@ export default function Main() {
             } else {
                 setPath([]);
                 setNeighbors([])
+                setMessage('No path found')
             }
         } catch (err) {
             console.error('Error running A*:', err);
