@@ -48,7 +48,10 @@ def get_neighbors(node, array):
 
             if 0 <= new_x < len(array) and 0 <= new_y < len(array[0]) and array[new_x][new_y] != 0:
                 move_cost = math.sqrt(2) if dx != 0 and dy != 0 else 1
-                move_cost += array[new_x][new_y]
+                cost = array[new_x][new_y]
+                if cost == 11 or cost == 12:
+                    cost = 1
+                move_cost += cost
                 neighbors.append(((new_x, new_y), move_cost))
 
         return neighbors
