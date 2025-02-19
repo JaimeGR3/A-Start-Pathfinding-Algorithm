@@ -275,15 +275,59 @@ button:hover {
 .grid-container::-webkit-scrollbar-corner {
   background-color: #111827;
 }
+
+.button-section {
+  display: flex;
+  flex: 1;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.result-button {
+  width: 100px;
+}
+
 .message-section {
   display: flex;
-  align-items: center;
+  align-content: center;
   flex-direction: column;
-  height: 100px;
 }
 .message {
   font-size: 14px;
   color: #d13a3a;
-  height: 10px;
+  height: 30px;
+
   font-weight: bold;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content {
+  background-color: #1f2937;
+  padding: 20px;
+  border-radius: 8px;
+  text-align: center;
+  width: 300px;
+}
+
+.button-modal {
+  padding: 10px;
+  background-color: #007bff;
+  color: white;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.modal-content button:hover {
+  background-color: #0056b3;
 }
