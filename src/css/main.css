@@ -213,7 +213,7 @@ button:hover {
 }
 
 .cell.processed {
-  background-color: lightgreen;
+  background-color: #90ee90;
   /* Processed cells (Green) */
 }
 
@@ -278,7 +278,7 @@ button:hover {
 
 .button-section {
   display: flex;
-  flex: 1;
+  width: 400px;
   justify-content: space-between;
   align-items: flex-start;
 }
@@ -313,11 +313,14 @@ button:hover {
 }
 
 .modal-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   background-color: #1f2937;
   padding: 20px;
   border-radius: 8px;
   text-align: center;
-  width: 300px;
+  width: fit-content;
 }
 
 .button-modal {

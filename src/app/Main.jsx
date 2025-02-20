@@ -106,48 +106,42 @@ export default function Main() {
     }
 
     const getClassNameForCell = (cellValue) => {
-
         switch (cellValue) {
-            case 11:
-                return 'path'; // Path (Blue)
-            case 12:
-                return 'processed'; // Processed (Yellow)
             case 0:
-                return 'blocked'; // Blocked (Red)
+                return 'blocked';
             case 1:
-                return ''; // Road (Gray)
+                return 'road';
             case 2:
-                return 'gravel'; // Gravel (Brown)
+                return 'gravel';
             case 3:
-                return 'sand'; // Sand (Yellow)
+                return 'sand';
             case 2.5:
-                return 'grass'; // Grass (Green)
+                return 'grass';
             case 3:
-                return 'shallow-water'; // Shallow Water (Light Blue)
+                return 'shallow-water';
             case 4:
-                return 'moderate-water'; // Moderate Water (Blue)
+                return 'moderate-water';
             case 6:
-                return 'deep-water'; // Deep Water (Dark Blue)
-            case 3.1:
-                return 'stream'; // Stream (Turquoise)
+                return 'deep-water';
             case 5:
-                return 'swamp'; // Swamp (Olive Green)
+                return 'stream';
             case 8:
-                return 'flood'; // Flood (Brownish Blue)
+                return 'swamp';
             case 4.1:
-                return 'mud'; // Mud (Dark Brown)
+                return 'mud';
             case 5.1:
-                return 'mountain'; // Mountain (Grayish Brown)
+                return 'mountain';
             case 4.2:
-                return 'forest'; // Forest (Dark Green)
+                return 'forest';
             case 2.2:
-                return 'dirt'; // Dirt (Light Brown)
+                return 'dirt';
             case 1.1:
-                return 'bridge'; // Bridge (Wooden Brown)
+                return 'bridge';
             default:
-                return ''; // Default case if no match
+                return '';
         }
     };
+
 
     const toggleCell = (x, y) => {
         const updatedGrid = [...grid];
@@ -196,7 +190,7 @@ export default function Main() {
                 row.map((cell, y) => {
                     const isPathCell = path.some(([px, py]) => px === x && py === y);
                     const isProcessedCell = neighbors.some(([nx, ny]) => nx === x && ny === y);
-    
+
                     if (isPathCell) return 11; // Path
                     if (isProcessedCell) return 12; // Processed (neighbor cells)
                     return cell; // Default cell value
@@ -205,7 +199,7 @@ export default function Main() {
             setPathGrid(updatedGrid); // Actualiza pathGrid con el nuevo mapa
         }
     }, [path, neighbors, grid]); // Dependencias: path, neighbors y grid
-    
+
 
     return (
         <div className="conteiner">
@@ -254,18 +248,73 @@ export default function Main() {
                 <section className='grid-container'>
                     {grid.map((row, x) => (
                         <div key={x} className="row">
-                            {row.map((cell, y) => (
-                                <div
-                                    key={`${x}-${y}`}
-                                    className={`cell ${getClassNameForCell(grid[x][y])}`}
-                                    onClick={() => toggleCell(x, y)}
-                                >
-                                    <span className="cell-text">{`(${x},${y})`}</span>
-                                </div>
-                            ))}
+                            {row.map((cell, y) => {
+                                const isPathCell = path.some(([px, py]) => px === x && py === y);
+                                const isProcessedCell = neighbors.some(([nx, ny]) => nx === x && ny === y);
+                                return (
+                                    <div
+                                        key={`${x}-${y}`}
+                                        className={`cell ${getClassNameForCell(cell)}`}
+                                        onClick={() => toggleCell(x, y)}
+                                    >
+                                        {isProcessedCell && (
+                                            <canvas
+                                                width="35"
+                                                height="35"
+                                                style={{
+                                                    position: 'absolute',
+                                                    top: 0,
+                                                    left: 0,
+                                                    pointerEvents: 'none',
+                                                }}
+                                                ref={(canvas) => {
+                                                    if (canvas) {
+                                                        const ctx = canvas.getContext('2d');
+                                                        // Dibujar línea verde para celdas procesadas
+                                                        ctx.strokeStyle = '#90ee90'; // Verde
+                                                        ctx.lineWidth = 3;
+                                                        ctx.beginPath();
+                                                        ctx.moveTo(0, 0); // Empezar en la esquina superior izquierda de la celda
+                                                        ctx.lineTo(35, 35); // Finalizar en la esquina inferior derecha
+                                                        ctx.stroke();
+                                                    }
+                                                }}
+                                            />
+                                        )}
+
+                                        {isPathCell && (
+                                            <canvas
+                                                width="35"
+                                                height="35"
+                                                style={{
+                                                    position: 'absolute',
+                                                    top: 0,
+                                                    left: 0,
+                                                    pointerEvents: 'none',
+                                                }}
+                                                ref={(canvas) => {
+                                                    if (canvas) {
+                                                        const ctx = canvas.getContext('2d');
+                                                        // Dibujar línea verde para celdas procesadas
+                                                        ctx.strokeStyle = '#74b9ff'; // Verde
+                                                        ctx.lineWidth = 3;
+                                                        ctx.beginPath();
+                                                        ctx.moveTo(0, 0); // Empezar en la esquina superior izquierda de la celda
+                                                        ctx.lineTo(35, 35); // Finalizar en la esquina inferior derecha
+                                                        ctx.stroke();
+                                                    }
+                                                }}
+                                            />
+                                        )}
+                                        <span className="cell-text">{`(${x},${y})`}</span>
+                                    </div>
+                                );
+                            })}
                         </div>
                     ))}
                 </section>
+
+
                 {result && (
                     <div className="modal-overlay">
                         <div className="modal-content">

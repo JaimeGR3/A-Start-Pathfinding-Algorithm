@@ -51,7 +51,11 @@ def get_neighbors(node, array):
                 cost = array[new_x][new_y]
                 if cost == 11 or cost == 12:
                     cost = 1
-                move_cost += cost
+                if cost == 1:
+                    move_cost = 1
+                else:
+                    move_cost += cost
+                    
                 neighbors.append(((new_x, new_y), move_cost))
 
         return neighbors
