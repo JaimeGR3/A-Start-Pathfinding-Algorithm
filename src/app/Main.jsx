@@ -25,6 +25,23 @@ export default function Main() {
         setAxisY(10)
     }, []);
 
+    useEffect(() => {
+        window.electron.ipcRenderer.on('update-processed', (data) => {
+            console.log('Processed data:', data[0]);
+            if (data[0] === '11') {
+                if (data[1] === null) {
+                    console.log('No path found', data[1]);
+                    setMessage('No path found');
+                    setNeighbors([]);
+                } else {
+                    setPath(data[1]);
+                }
+            } else if (data[0] === '12') {
+                setNeighbors(data[1]);
+            }
+        });
+    }, []);
+
     const generateCoordinates = (x, y) => {
         const newCoordinates = [];
         for (let i = 0; i < x; i++) {
@@ -78,16 +95,12 @@ export default function Main() {
             }
 
             setMessage('')
+            setNeighbors([]);
+            setPath([]);
             resetPathCells();
-            const result = await window.electron.runAStarAlgorithm(grid, start, goal);
-            if (result) {
-                setPath(result[0]);
-                setNeighbors(result[1])
-            } else {
-                setPath([]);
-                setNeighbors([])
-                setMessage('No path found')
-            }
+
+            window.electron.runAStarAlgorithm(grid, start, goal);
+            
         } catch (err) {
             console.error('Error running A*:', err);
         }
@@ -99,6 +112,7 @@ export default function Main() {
         );
         setGrid(updatedGrid);
     };
+
     useEffect(() => {
         resetPathCells();
 
@@ -109,7 +123,8 @@ export default function Main() {
 
                 if (isPathCell) return 2
                 if (isProcessedCell) return 3
-                return cell;
+                if (cell === 1) return 1
+                if (cell === 0) return 0
             })
         );
 

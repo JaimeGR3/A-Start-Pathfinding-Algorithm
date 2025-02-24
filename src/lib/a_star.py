@@ -1,6 +1,7 @@
 import sys
 import json
 import math
+import time
 from heapq import heappush, heappop
 
 class Node:
@@ -70,6 +71,9 @@ def a_star_search(start_pos, goal_pos, grid):
     to_search = []
     processed = set()
 
+    if start_pos == goal_pos:
+        return [start_pos]
+
     if grid[start_pos[0]][start_pos[1]] == 1:
         return None
     
@@ -80,10 +84,17 @@ def a_star_search(start_pos, goal_pos, grid):
     while to_search:
         current_node = heappop(to_search)
         
-        processed.add(current_node.position)
-        if current_node.position == goal_pos:
-            return [reconstruct_path(current_node), list(processed)]
+        if current_node.position in processed:
+            continue
 
+        processed.add(current_node.position)
+
+        sys.stdout.write(json.dumps(['12', list(processed)]) + '\n')
+        sys.stdout.flush()
+        time.sleep(0.1)
+        
+        if current_node.position == goal_pos:
+            return reconstruct_path(current_node)
 
         for neighbor_pos, move_cost in get_neighbors(current_node, grid):
             if neighbor_pos in processed:
@@ -92,7 +103,9 @@ def a_star_search(start_pos, goal_pos, grid):
             g_cost = current_node.g + move_cost
             neighbor_node = Node(neighbor_pos, g=g_cost, h=heuristic(neighbor_pos, goal_pos), parent=current_node)
             
-            heappush(to_search, neighbor_node)
+            if neighbor_pos not in processed:
+                heappush(to_search, neighbor_node)
+
 
     return None  # No path found
 
@@ -108,4 +121,4 @@ if __name__ == "__main__":
 
     path = a_star_search(start, goal, data)
 
-    print(json.dumps(path))
+    print(json.dumps(['11',path]))

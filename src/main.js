@@ -2,8 +2,9 @@ const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('path');
 const { execFile } = require('child_process');  
 
+let win;
 function createWindow() {
-    const win = new BrowserWindow({
+    win = new BrowserWindow({
         width: 800,
         height: 750,
         minWidth: 800,
@@ -24,8 +25,7 @@ app.whenReady().then(() => {
 
     ipcMain.handle('run-a-star', async (event, array, start, goal) => {
         try {
-            const result = await runAStar(array, start, goal);
-            return result;
+            await runAStar(array, start, goal, win);
         } catch (err) {
             console.error('Error running A*:', err);
             return null;
@@ -39,26 +39,34 @@ app.whenReady().then(() => {
     });
 });
 
-function runAStar(array, start, goal) {
+function runAStar(array, start, goal, win) {
     return new Promise((resolve, reject) => {
         const exeFilePath = path.join(__dirname, 'lib', 'dist', 'a_star.exe');
-
-        execFile(exeFilePath, [JSON.stringify(array), start, goal], (error, stdout, stderr) => {
-            if (error) {
-                console.error(`Execution error: ${error.message}`);
-                reject(error);
-                return;
-            }
-            if (stderr) {
-                console.error(`Executable error: ${stderr}`);
-                reject(stderr);
-                return;
-            }
+        //const exeFilePath = path.join(__dirname, 'lib', 'a_star.py');
+        //const pythonProcess = execFile('python', [path.join(__dirname, 'lib', 'a_star.py'), JSON.stringify(array), start, goal]);
+        const pythonProcess = execFile(exeFilePath, [JSON.stringify(array), start, goal]);
+        pythonProcess.stdout.on('data', (data) => {
             try {
-                resolve(JSON.parse(stdout.toString()));
-            } catch (parseError) {
-                reject(`JSON parse error: ${parseError}`);
+                console.log(`From Python in main.js: ${data.toString()}`);
+                const processedData = JSON.parse(data.toString());
+                // Enviar los nodos procesados al front-end en tiempo real
+                if (win) {
+                    console.log('Sending processed data to front-end:', processedData);
+                    win.webContents.send('update-processed', processedData);
+                }
+            } catch (err) {
+                console.error('Error parsing processed data:', err);
             }
+        });
+
+        pythonProcess.on('close', (code) => {
+            console.log(`Python process closed with code ${code}`);
+            resolve();
+        });
+
+        pythonProcess.on('error', (error) => {
+            console.error(`Execution error: ${error.message}`);
+            reject(error);
         });
     });
 }
