@@ -37,7 +37,7 @@ export default function Main() {
                     setPath(data[1]);
                 }
             } else if (data[0] === '12') {
-                setNeighbors(data[1]);
+                setNeighbors((prevNeighbors) => [...prevNeighbors,data[1]]);
             }
         });
     }, []);

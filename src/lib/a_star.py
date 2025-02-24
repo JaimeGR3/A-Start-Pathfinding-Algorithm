@@ -89,9 +89,9 @@ def a_star_search(start_pos, goal_pos, grid):
 
         processed.add(current_node.position)
 
-        sys.stdout.write(json.dumps(['12', list(processed)]) + '\n')
+        sys.stdout.write(json.dumps(['12', current_node.position]) + '\n')
         sys.stdout.flush()
-        time.sleep(0.1)
+        time.sleep(0.01)
         
         if current_node.position == goal_pos:
             return reconstruct_path(current_node)
