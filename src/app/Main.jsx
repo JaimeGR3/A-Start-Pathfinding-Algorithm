@@ -17,7 +17,6 @@ export default function Main() {
     const [message, setMessage] = useState('');
     const [terrain, setTerrain] = useState(0);
     const [result, setResult] = useState(false);
-
     const obstacles = [
         { content: "Blocked (Red)", value: 0 },
         { content: "Road (Gray)", value: 1 },
@@ -47,6 +46,21 @@ export default function Main() {
     useEffect(() => {
         setAxisX(10);
         setAxisY(10);
+    }, []);
+
+    useEffect(() => {
+        window.electron.ipcRenderer.on('update-processed', (data) => {
+            if (data[0] === '11') {
+                if (data[1] === null) {
+                    setMessage('No path found');
+                    setNeighbors([]);
+                } else {
+                    setPath(data[1]);
+                }
+            } else if (data[0] === '12') {
+                setNeighbors((prevNeighbors) => [...prevNeighbors, data[1]]);
+            }
+        });
     }, []);
 
     const generateCoordinates = (x, y) => {
@@ -162,26 +176,13 @@ export default function Main() {
             }
 
             setMessage('')
-            console.log(grid)
-            console.log(start, goal)
-            const result = await window.electron.runAStarAlgorithm(grid, start, goal);
-            if (result) {
-                setPath(result[0]);
-                setNeighbors(result[1])
-            } else {
-                setPath([]);
-                setNeighbors([])
-            }
+            setPath([])
+            setNeighbors([])
+            await window.electron.runAStarAlgorithm(grid, start, goal);
+
         } catch (err) {
             setMessage('Error running A*:', err);
         }
-    };
-
-    const resetPathCells = () => {
-        const updatedGrid = pathGrid.map(row =>
-            row.map(cell => (cell === 11 || cell === 12 ? 1 : cell))
-        );
-        setPathGrid(updatedGrid);
     };
 
     useEffect(() => {
@@ -239,105 +240,93 @@ export default function Main() {
                     <Dopdown title="Goal" data={coordinates} onChange={handleGoal} />
                 </section>
                 <section className="message-section">
-                    <div className='button-section'>
                         <button onClick={handleRunAlgorithm}>Run A Star Algorithm</button>
-                        <button className="result-button" onClick={handleResult}>See Result</button>
-                    </div>
                     <span className="message">{message}</span>
                 </section>
-                <section className='grid-container'>
+                <section className='grid-container' style={{ position: 'relative' }}>
                     {grid.map((row, x) => (
                         <div key={x} className="row">
-                            {row.map((cell, y) => {
-                                const isPathCell = path.some(([px, py]) => px === x && py === y);
-                                const isProcessedCell = neighbors.some(([nx, ny]) => nx === x && ny === y);
-                                return (
-                                    <div
-                                        key={`${x}-${y}`}
-                                        className={`cell ${getClassNameForCell(cell)}`}
-                                        onClick={() => toggleCell(x, y)}
-                                    >
-                                        {isProcessedCell && (
-                                            <canvas
-                                                width="35"
-                                                height="35"
-                                                style={{
-                                                    position: 'absolute',
-                                                    top: 0,
-                                                    left: 0,
-                                                    pointerEvents: 'none',
-                                                }}
-                                                ref={(canvas) => {
-                                                    if (canvas) {
-                                                        const ctx = canvas.getContext('2d');
-                                                        // Dibujar línea verde para celdas procesadas
-                                                        ctx.strokeStyle = '#90ee90'; // Verde
-                                                        ctx.lineWidth = 3;
-                                                        ctx.beginPath();
-                                                        ctx.moveTo(0, 0); // Empezar en la esquina superior izquierda de la celda
-                                                        ctx.lineTo(35, 35); // Finalizar en la esquina inferior derecha
-                                                        ctx.stroke();
-                                                    }
-                                                }}
-                                            />
-                                        )}
+                            {row.map((cell, y) => (
+                                <div
+                                    key={`${x}-${y}`}
+                                    className={`cell ${getClassNameForCell(cell)}`}
+                                    onClick={() => toggleCell(x, y)}
+                                    style={{ position: 'relative' }} // Para permitir que los elementos hijos se posicionen dentro
+                                >
+                                    <span className="cell-text">{`(${x},${y})`}</span>
+                                    {start === `(${x},${y})` && (
+                                        <span
+                                            className="start-marker"
+                                            style={{
+                                                position: 'absolute',
+                                                top: '50%',
+                                                left: '50%',
+                                                transform: 'translate(-50%, -50%)',
+                                                fontSize: '25px',
+                                                fontWeight: 'bold',
+                                                color: 'orange',
+                                                zIndex: 40
+                                            }}
+                                        >
+                                            S
+                                        </span>
+                                    )}
 
-                                        {isPathCell && (
-                                            <canvas
-                                                width="35"
-                                                height="35"
-                                                style={{
-                                                    position: 'absolute',
-                                                    top: 0,
-                                                    left: 0,
-                                                    pointerEvents: 'none',
-                                                }}
-                                                ref={(canvas) => {
-                                                    if (canvas) {
-                                                        const ctx = canvas.getContext('2d');
-                                                        // Dibujar línea verde para celdas procesadas
-                                                        ctx.strokeStyle = '#74b9ff'; // Verde
-                                                        ctx.lineWidth = 3;
-                                                        ctx.beginPath();
-                                                        ctx.moveTo(0, 0); // Empezar en la esquina superior izquierda de la celda
-                                                        ctx.lineTo(35, 35); // Finalizar en la esquina inferior derecha
-                                                        ctx.stroke();
-                                                    }
-                                                }}
-                                            />
-                                        )}
-                                        <span className="cell-text">{`(${x},${y})`}</span>
-                                    </div>
-                                );
-                            })}
+                                    {/* Mostrar "G" si es la celda de meta */}
+                                    {goal === `(${x},${y})` && (
+                                        <span
+                                            className="goal-marker"
+                                            style={{
+                                                position: 'absolute',
+                                                top: '50%',
+                                                left: '50%',
+                                                transform: 'translate(-50%, -50%)',
+                                                fontSize: '25px',
+                                                fontWeight: 'bold',
+                                                color: 'yellow',
+                                                zIndex: 40
+                                            }}
+                                        >
+                                            G
+                                        </span>
+                                    )}
+                                    {neighbors.some(([px, py]) => px === x && py === y) && (
+                                        <div
+                                            className="circle"
+                                            style={{
+                                                position: 'absolute',
+                                                top: '50%',
+                                                left: '50%',
+                                                width: '12px',
+                                                height: '12px',
+                                                backgroundColor: '#90ee90',
+                                                borderRadius: '50%',
+                                                transform: 'translate(-50%, -50%)'
+                                            }}
+                                        ></div>
+                                    )}
+                                    {/* Solo dibujar el círculo si la celda está en el path */}
+                                    {path.some(([px, py]) => px === x && py === y) && (
+                                        <div
+                                            className="circle"
+                                            style={{
+                                                position: 'absolute',
+                                                top: '50%',
+                                                left: '50%',
+                                                width: '12px',
+                                                height: '12px',
+                                                backgroundColor: '#74b9ff',
+                                                borderRadius: '50%',
+                                                transform: 'translate(-50%, -50%)'
+                                            }}
+                                        ></div>
+                                    )}
+                                </div>
+                            ))}
                         </div>
                     ))}
                 </section>
 
-
-                {result && (
-                    <div className="modal-overlay">
-                        <div className="modal-content">
-                            <h2>Pathfinding Result</h2>
-                            <p>Path found: {path.length > 0 ? 'Yes' : 'No'}</p>
-                            <div className="grid-container">
-                                {pathGrid.map((row, x) => (
-                                    <div key={x} className="row">
-                                        {row.map((cell, y) => (
-                                            <div
-                                                key={`${x}-${y}`}
-                                                className={`cell ${cell === 0 ? 'blocked' : ''} ${cell === 11 ? 'path' : ''} ${cell === 12 ? 'processed' : ''}`}
-                                            >
-                                                <span className="cell-text">{`(${x},${y})`}</span>
-                                            </div>
-                                        ))}
-                                    </div>
-                                ))}
-                            </div>
-                            <button onClick={() => setResult(false)}>Close</button>
-                        </div>
-                    </div>
-                )}
             </main>
         </div>
     );

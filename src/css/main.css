@@ -207,16 +207,6 @@ button:hover {
   /* Wooden Brown */
 }
 
-.cell.path {
-  background-color: #74b9ff;
-  /* Path (Blue) */
-}
-
-.cell.processed {
-  background-color: #90ee90;
-  /* Processed cells (Green) */
-}
-
 .cell-text {
   font-size: 10px;
   color: #333;
@@ -296,7 +286,6 @@ button:hover {
   font-size: 14px;
   color: #d13a3a;
   height: 30px;
-
   font-weight: bold;
 }
 
