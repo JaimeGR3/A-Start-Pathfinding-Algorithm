@@ -1,7 +1,7 @@
 {
   "main": "src/main.js",
-  "name": "a_star_algorithm",
-  "productName": "A Star Algorithm",
+  "name": "a_star_algorithm_weighted",
+  "productName": "A Star Algorithm Weighted",
   "version": "1.0.0",
   "private": true,
   "dependencies": {
