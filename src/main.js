@@ -42,9 +42,7 @@ app.whenReady().then(() => {
 function runAStar(array, start, goal, win) {
     return new Promise((resolve, reject) => {
         const exeFilePath = path.join(__dirname, 'lib', 'dist', 'a_star.exe');
-        //const exeFilePath = path.join(__dirname, 'lib', 'a_star.py');
-        const pythonProcess = execFile('python', [path.join(__dirname, 'lib', 'a_star.py'), JSON.stringify(array), start, goal]);
-        //const pythonProcess = execFile(exeFilePath, [JSON.stringify(array), start, goal]);
+        const pythonProcess = execFile(exeFilePath, [JSON.stringify(array), start, goal]);
         pythonProcess.stdout.on('data', (data) => {
             try {
                 console.log(`From Python in main.js: ${data.toString()}`);
