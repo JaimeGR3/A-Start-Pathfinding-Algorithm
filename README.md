@@ -82,7 +82,7 @@ The packaged app can be found in the `out` directory.
 ---
 -->
 ## Usage
-
+### Normal Version
 1. Launch the application.
 2. Define the starting and goal points on the grid.
 3. Click "Run A\*" to calculate the optimal path.
@@ -90,11 +90,37 @@ The packaged app can be found in the `out` directory.
 5. Click on grid cells to place or remove obstacles dynamically; the path will update automatically based on the
 changes.
 
-### Color Legend
+#### Color Legend
 - **Blue**: The optimal path.
 - **Green**: Nodes considered when calculating the path.
 - **Red**: Blocked cells (obstacles).
 
+### Weighted Version
+1. Launch the application.
+2. Define the starting and goal points on the grid.
+3. Click "Run A\*" to calculate the optimal path.
+4. The path will be highlighted in real-time on the grid.
+5. Select the terrain to use a diferent weight
+6. Click on grid cells to put that weight on the grid cell
+
+#### Weight Legend
+   | Terrain        | Weight |
+   |----------------|--------|
+   | blocked        | 0      |
+   | road           | 1      |
+   | gravel         | 2      |
+   | sand           | 3      |
+   | grass          | 2.5    |
+   | shallow-water  | 3      |
+   | moderate-water | 4      |
+   | deep-water     | 6      |
+   | stream         | 5      |
+   | swamp          | 8      |
+   | mud            | 4.1    |
+   | mountain       | 5.1    |
+   | forest         | 4.2    |
+   | dirt           | 2.2    |
+   | bridge         | 1.1    |
 ---
 
 
